@@ -34,6 +34,8 @@ public:
         return this->m_coord.y;
     }
 };
+
+const size default_size = size(-1, -1);
 };
 
 #endif

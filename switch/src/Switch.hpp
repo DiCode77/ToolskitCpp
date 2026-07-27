@@ -22,6 +22,13 @@ public:
     Switch(void*, const visuals::point&, const visuals::size&);
     ~Switch();
     
+    visuals::point get_position();
+    visuals::size  get_size();
+    
+    void set_point(const visuals::point&);
+    void set_size(const visuals::size&);
+    
+    bool Create(void*, const visuals::point&, const visuals::size&);
     void bind(const std::function<void(const ControlStateValue&)>&);
 };
 

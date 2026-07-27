@@ -38,6 +38,8 @@ public:
     }
 };
 
+const point default_position = point(-1, -1);
+
 };
 
 #endif
