@@ -1,8 +1,8 @@
 #include "Switch.hpp"
 #include "Switch.h"
 
-Switch::Switch(void *parent, const visuals::point &point, const visuals::size &size) : Switch(){
-    this->Create(parent, point, size);
+Switch::Switch(void *parent, const visuals::point &point, const visuals::size &size,const switch_control::size &size_sw) : Switch(){
+    this->Create(parent, point, size, size_sw);
 }
 
 Switch::~Switch(){
@@ -25,19 +25,35 @@ void Switch::set_size(const visuals::size &size){
     this->m_sw_bridge->set_size(size);
 }
 
-bool Switch::Create(void *parent, const visuals::point &point, const visuals::size &size){
+void Switch::set_enabled(bool ed){
+    this->m_sw_bridge->set_enabled(ed);
+}
+
+void Switch::set_state(const switch_control::state &state){
+    this->m_sw_bridge->set_state(state);
+}
+
+void Switch::set_size_control(const switch_control::size &size_sw){
+    this->m_sw_bridge->set_size_control(size_sw);
+}
+
+bool Switch::Create(void *parent, const visuals::point &point, const visuals::size &size, const switch_control::size &size_sw){
     if (this->m_sw_bridge == nullptr){
-        this->m_sw_bridge = new SwitchBridge(parent, point, size);
+        this->m_sw_bridge = new SwitchBridge(parent, point, size, size_sw);
     }
 }
 
-void Switch::bind(const std::function<void(const ControlStateValue&)> &func){
+void Switch::bind(const std::function<void(const switch_control::state&)> &func){
     this->m_sw_bridge->_bind(func);
 };
 
+void Switch::Cell_Func(const switch_control::state &state){
+    this->m_sw_bridge->CellFunc(state);
+}
+
 SwitchBridge::SwitchBridge() : m_switch(nil), m_sw_delegate([[SwitchDelegate alloc] init]){}
-SwitchBridge::SwitchBridge(void *parent, const visuals::point &point, const visuals::size &size) : SwitchBridge::SwitchBridge(){
-    this->Create(parent, point, size);
+SwitchBridge::SwitchBridge(void *parent, const visuals::point &point, const visuals::size &size, const switch_control::size &size_sw) : SwitchBridge::SwitchBridge(){
+    this->Create(parent, point, size, size_sw);
 }
 
 SwitchBridge::~SwitchBridge(){
@@ -75,7 +91,45 @@ void SwitchBridge::set_size(const visuals::size &size){
     this->m_switch.frame = frame;
 }
 
-bool SwitchBridge::Create(void *parent, const visuals::point &point, const visuals::size &size){
+void SwitchBridge::set_enabled(bool enabled){
+    [this->m_switch setEnabled:(BOOL)enabled];
+}
+
+void SwitchBridge::set_state(const switch_control::state &state){
+    switch (state) {
+        case switch_control::state::ControlStateValueMixed:
+            [this->m_switch setState:NSControlStateValueMixed];
+            break;
+        case switch_control::state::ControlStateValueOff:
+            [this->m_switch setState:NSControlStateValueOff];
+            break;
+        case switch_control::state::ControlStateValueOn:
+            [this->m_switch setState:NSControlStateValueOn];
+            break;
+    }
+}
+
+void SwitchBridge::set_size_control(const switch_control::size &size_sw){
+    switch (size_sw) {
+        case switch_control::size::ControlSizeRegular:
+            [this->m_switch setControlSize:NSControlSizeRegular];
+            break;
+        case switch_control::size::ControlSizeSmall:
+            [this->m_switch setControlSize:NSControlSizeSmall];
+            break;
+        case switch_control::size::ControlSizeMini:
+            [this->m_switch setControlSize:NSControlSizeMini];
+            break;
+        case switch_control::size::ControlSizeLarge:
+            [this->m_switch setControlSize:NSControlSizeLarge];
+            break;
+        case switch_control::size::ControlSizeExtraLarge:
+            [this->m_switch setControlSize:NSControlSizeExtraLarge];
+            break;
+    }
+}
+
+bool SwitchBridge::Create(void *parent, const visuals::point &point, const visuals::size &size, const switch_control::size &size_sw){
     if (parent != nullptr){
         this->m_ns_view = (__bridge NSView*)parent;
         this->m_sw_delegate.bridge = this;
@@ -97,17 +151,24 @@ bool SwitchBridge::Create(void *parent, const visuals::point &point, const visua
         }
         
         [this->m_switch initWithFrame:rect];
-        this->m_switch.state = NSControlStateValueOff;
-        
+        [this->m_switch setState:NSControlStateValueOff];
+        [this->m_switch setControlSize:(NSControlSize)size_sw];
         [this->m_switch setTarget:this->m_sw_delegate];
         [this->m_switch setAction:@selector(toggleChanged:)];
+        
+        [this->m_switch setClipsToBounds:1];
         [this->m_ns_view addSubview:this->m_switch];
-        [NSApp activateIgnoringOtherApps:YES];
     }
 }
 
-void SwitchBridge::_bind(const std::function<void(const ControlStateValue&)> &func){
+void SwitchBridge::_bind(const std::function<void(const switch_control::state&)> &func){
     this->m_cell_button = func;
+}
+
+void SwitchBridge::CellFunc(const switch_control::state &state){
+    if (this->m_cell_button){
+        this->m_cell_button(state);
+    }
 }
 
 @implementation SwitchDelegate
@@ -116,13 +177,13 @@ void SwitchBridge::_bind(const std::function<void(const ControlStateValue&)> &fu
         if (self.bridge->m_cell_button){
             switch (sender.state) {
                 case NSControlStateValueMixed:
-                    self.bridge->m_cell_button(ControlStateValue::ControlStateValueMixed);
+                    self.bridge->m_cell_button(switch_control::state::ControlStateValueMixed);
                     break;
                 case NSControlStateValueOff:
-                    self.bridge->m_cell_button(ControlStateValue::ControlStateValueOff);
+                    self.bridge->m_cell_button(switch_control::state::ControlStateValueOff);
                     break;
                 case NSControlStateValueOn:
-                    self.bridge->m_cell_button(ControlStateValue::ControlStateValueOn);
+                    self.bridge->m_cell_button(switch_control::state::ControlStateValueOn);
                     break;
             }
         }
