@@ -155,8 +155,6 @@ bool SwitchBridge::Create(void *parent, const visuals::point &point, const visua
         [this->m_switch setControlSize:(NSControlSize)size_sw];
         [this->m_switch setTarget:this->m_sw_delegate];
         [this->m_switch setAction:@selector(toggleChanged:)];
-        
-        [this->m_switch setClipsToBounds:1];
         [this->m_ns_view addSubview:this->m_switch];
     }
 }
