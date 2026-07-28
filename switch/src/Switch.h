@@ -16,6 +16,7 @@
 #include "Point.hpp"
 #include "Property.hpp"
 
+class SwitchBridge;
 @interface SwitchDelegate : NSObject
 @property(nonatomic, assign) SwitchBridge *bridge;
 @end

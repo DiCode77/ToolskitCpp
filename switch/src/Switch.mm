@@ -40,7 +40,9 @@ void Switch::set_size_control(const switch_control::size &size_sw){
 bool Switch::Create(void *parent, const visuals::point &point, const visuals::size &size, const switch_control::state &state, const switch_control::size &size_sw){
     if (this->m_sw_bridge == nullptr){
         this->m_sw_bridge = new SwitchBridge(parent, point, size, state, size_sw);
+        return true;
     }
+    return false;
 }
 
 void Switch::bind(const std::function<void(const switch_control::state&)> &func){
@@ -156,7 +158,10 @@ bool SwitchBridge::Create(void *parent, const visuals::point &point, const visua
         [this->m_switch setTarget:this->m_sw_delegate];
         [this->m_switch setAction:@selector(toggleChanged:)];
         [this->m_ns_view addSubview:this->m_switch];
+        
+        return true;
     }
+    return false;
 }
 
 void SwitchBridge::_bind(const std::function<void(const switch_control::state&)> &func){
