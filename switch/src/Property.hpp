@@ -11,9 +11,9 @@
 namespace switch_control{
 
 enum class state{
-    ControlStateValueMixed,
-    ControlStateValueOff,
-    ControlStateValueOn
+    ControlStateValueMixed = -1,
+    ControlStateValueOff   = 0,
+    ControlStateValueOn    = 1
 };
 
 enum class size{
@@ -23,6 +23,9 @@ enum class size{
     ControlSizeLarge,
     ControlSizeExtraLarge // for macOS >= 20.0
 };
+
+const state state_default = state::ControlStateValueOff;
+const size  size_default  = size::ControlSizeLarge;
 
 }
 #endif
