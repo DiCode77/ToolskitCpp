@@ -29,6 +29,7 @@ ButtonBridge::~ButtonBridge(){
 bool ButtonBridge::Create(void *parent, const bttn::property &prop){
     if (parent != nullptr){
         this->m_ns_view = (__bridge NSView*)parent;
+        this->m_button_delegate.bridge = this;
         
         this->m_ns_button = [NSButton alloc];
         
@@ -48,7 +49,7 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         
         [this->m_ns_button initWithFrame:rect];
         [this->m_ns_button setTitle: ((prop.title != nullptr) ? [NSString stringWithUTF8String:prop.title] : @"Button")];
-        [this->m_ns_button setButtonType:NSButtonTypeMomentaryPushIn];
+        [this->m_ns_button setButtonType:(NSButtonType)prop.type];
         [this->m_ns_view addSubview:this->m_ns_button];
         
         return true;
@@ -57,4 +58,5 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
 }
 
 @implementation ButtonDelegate
+
 @end
