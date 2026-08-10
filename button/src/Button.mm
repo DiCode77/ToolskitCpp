@@ -44,11 +44,12 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         if (prop.size != visuals::default_size){
             rect.size = CGSize(prop.size.GetX(), prop.size.GetY());
         }else{
-            rect.size = [this->m_ns_button intrinsicContentSize];
+            rect.size = CGSize(visuals::default_size.GetX(), visuals::default_size.GetY());
         }
         
         [this->m_ns_button initWithFrame:rect];
         [this->m_ns_button setTitle: ((prop.title != nullptr) ? [NSString stringWithUTF8String:prop.title] : @"Button")];
+        [this->m_ns_button setBezelStyle:(NSBezelStyle)prop.style];
         [this->m_ns_button setButtonType:(NSButtonType)prop.type];
         [this->m_ns_view addSubview:this->m_ns_button];
         
