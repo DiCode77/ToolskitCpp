@@ -6,6 +6,32 @@ Button::Button(void *parent, const bttn::property &prop) : Button::Button(){
     this->Create(parent, prop);
 }
 
+void Button::set_size(const visuals::size &size){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_size(size);
+    }
+}
+
+void Button::set_position(const visuals::point &point){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_position(point);
+    }
+}
+
+visuals::size Button::get_size() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->get_size();
+    }
+    return {};
+}
+
+visuals::point Button::get_position() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->get_position();
+    }
+    return {};
+}
+
 bool Button::Create(void *parent, const bttn::property &prop){
     if (this->m_button_bridge == nullptr){
         this->m_button_bridge = new ButtonBridge(parent, prop);
@@ -28,6 +54,30 @@ ButtonBridge::~ButtonBridge(){
         [this->m_ns_button release];
     }
     [this->m_button_delegate release];
+}
+
+void ButtonBridge::set_size(const visuals::size &size){
+    NSRect rect = this->m_ns_button.frame;
+    rect.size = NSMakeSize((CGFloat)size.GetX(), (CGFloat)size.GetY());
+    this->m_ns_button.frame = rect;
+}
+
+void ButtonBridge::set_position(const visuals::point &point){
+    NSRect rect = this->m_ns_button.frame;
+    rect.origin = NSMakePoint((CGFloat)point.GetX(), (CGFloat)point.GetY());
+    this->m_ns_button.frame = rect;
+}
+
+visuals::size ButtonBridge::get_size() const{
+    CGSize size = [this->m_ns_button frame].size;
+    
+    return { static_cast<double>(size.width), static_cast<double>(size.height) };
+}
+
+visuals::point ButtonBridge::get_position() const{
+    CGPoint point = [this->m_ns_button frame].origin;
+    
+    return { static_cast<double>(point.x), static_cast<double>(point.y) };
 }
 
 bool ButtonBridge::Create(void *parent, const bttn::property &prop){
@@ -80,12 +130,12 @@ void ButtonBridge::_bind(const std::function<void(const bttn::event&)> &func){
                 .prop{
                     .title  = [[button title] UTF8String],
                     .point{
-                        static_cast<double>([button visibleRect].origin.x),
-                        static_cast<double>([button visibleRect].origin.y)
+                        static_cast<double>([button frame].origin.x),
+                        static_cast<double>([button frame].origin.y)
                     },
                         .size{
-                            static_cast<double>([button visibleRect].size.width),
-                            static_cast<double>([button visibleRect].size.height)
+                            static_cast<double>([button frame].size.width),
+                            static_cast<double>([button frame].size.height)
                         },
                     .type   = static_cast<bttn::btype>(-1),
                     .style  = static_cast<bttn::bstyle>([button bezelStyle]),

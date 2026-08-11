@@ -60,7 +60,6 @@ struct property{
 
 struct event{
     property prop;
-    int      id;
     bool     enabled;
     bool     hidden;
 };

@@ -33,6 +33,14 @@ public:
     double GetY() const{
         return this->m_coord.y;
     }
+    
+    void SetX(double x){
+        this->m_coord.x = x;
+    }
+    
+    void SetY(double y){
+        this->m_coord.y = y;
+    }
 };
 
 const size default_size = size(90, 20);
