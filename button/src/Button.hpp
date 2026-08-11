@@ -39,6 +39,9 @@ public:
     void set_enabled(bool);
     void set_hidden(bool);
     void set_bordered(bool);
+    void set_state(const bttn::state&);
+    
+    void set_toggle(Button*);
     
     bool Create(void*, const bttn::property&);
     void bind(const std::function<void(const bttn::event&)>&);

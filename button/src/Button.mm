@@ -91,6 +91,18 @@ void Button::set_bordered(bool status){
     }
 }
 
+void Button::set_state(const bttn::state &state){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_state(state);
+    }
+}
+
+void Button::set_toggle(Button *l_button){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_toggle(l_button->m_button_bridge);
+    }
+}
+
 bool Button::Create(void *parent, const bttn::property &prop){
     if (this->m_button_bridge == nullptr){
         this->m_button_bridge = new ButtonBridge(parent, prop);
@@ -113,6 +125,7 @@ ButtonBridge::~ButtonBridge(){
         [this->m_ns_button release];
     }
     [this->m_button_delegate release];
+    this->m_array_button.clear();
 }
 
 void ButtonBridge::set_title(const char *title){
@@ -211,6 +224,19 @@ void ButtonBridge::set_bordered(bool en){
     return;
 }
 
+void ButtonBridge::set_state(const bttn::state &state){
+    if (this->m_ns_button != nil){
+        [this->m_ns_button setState:(NSControlStateValue)state];
+    }
+}
+
+void ButtonBridge::set_toggle(ButtonBridge *l_bbuton){
+    this->m_array_button.insert(l_bbuton->m_ns_button);
+    
+    [l_bbuton->m_ns_button setTarget:this->m_button_delegate];
+    [l_bbuton->m_ns_button setAction:[this->m_ns_button action]];
+}
+
 bool ButtonBridge::Create(void *parent, const bttn::property &prop){
     if (parent != nullptr){
         this->m_ns_view = (__bridge NSView*)parent;
@@ -238,7 +264,10 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         [this->m_ns_button setBezelStyle:(NSBezelStyle)prop.style];
         [this->m_ns_button setButtonType:(NSButtonType)prop.type];
         [this->m_ns_button setBordered:(BOOL)prop.bordered];
+        [this->m_ns_button setTag:(NSInteger)prop.tag];
         [this->m_ns_view addSubview:this->m_ns_button];
+        
+        this->m_array_button.insert(this->m_ns_button);
         
         return true;
     }
@@ -272,10 +301,20 @@ void ButtonBridge::_bind(const std::function<void(const bttn::event&)> &func){
                     .type   = static_cast<bttn::btype>(-1),
                     .style  = static_cast<bttn::bstyle>([button bezelStyle]),
                     .state  = static_cast<bttn::state>([button state]),
+                    .tag    =  static_cast<int>([button tag])
                 },
-                    .enabled = static_cast<bool>([button isEnabled]),
+                
+                .enabled = static_cast<bool>([button isEnabled]),
                 .hidden = static_cast<bool>([button isHidden]),
             };
+            
+            for (auto it = self.bridge->m_array_button.begin(); it != self.bridge->m_array_button.end(); it++){
+                if (*it != button){
+                    if ([(*it) state] != NSControlStateValueOff){
+                        [(*it) setState:NSControlStateValueOff];
+                    }
+                }
+            }
             self.bridge->m_cell_button(ev);
         }
     }

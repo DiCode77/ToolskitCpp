@@ -11,6 +11,7 @@
 #include <Foundation/Foundation.h>
 #include <Cocoa/Cocoa.h>
 #include <functional>
+#include <set>
 
 #include "Point.hpp"
 #include "Size.hpp"
@@ -23,12 +24,17 @@ class ButtonBridge;
 - (void)buttonClicked:(id)sender;
 @end
 
+@interface ButtonGroup : NSObject
+@property (nonatomic, retain) NSArray *m_buttons;
+@end
+
 class ButtonBridge{
     NSView         *m_ns_view;
     NSButton       *m_ns_button;
     ButtonDelegate *m_button_delegate;
 public:
     std::function<void(const bttn::event&)> m_cell_button;
+    std::set<NSButton*> m_array_button;
 public:
     ButtonBridge();
     ButtonBridge(void*, const bttn::property&);
@@ -40,7 +46,7 @@ public:
     void set_size(const visuals::size&);
     void set_position(const visuals::point&);
     
-    visuals::size  get_size() const;
+    visuals::size  get_size() const; 
     visuals::point get_position() const;
     
     bool is_enabled() const;
@@ -51,6 +57,9 @@ public:
     void set_enabled(bool);
     void set_hidden(bool);
     void set_bordered(bool);
+    void set_state(const bttn::state&);
+    
+    void set_toggle(ButtonBridge *l_bbuton);
     
     bool Create(void*, const bttn::property&);
     void _bind(const std::function<void(const bttn::event&)>&);

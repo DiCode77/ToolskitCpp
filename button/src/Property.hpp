@@ -57,6 +57,7 @@ struct property{
     const bstyle   style    = bstyle::BezelStyleAutomatic;
     const state    state    = state::ControlStateValueOff;
     const bool     bordered = true;
+    const int      tag      = -1;
 };
 
 struct event{
