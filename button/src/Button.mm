@@ -6,6 +6,19 @@ Button::Button(void *parent, const bttn::property &prop) : Button::Button(){
     this->Create(parent, prop);
 }
 
+void Button::set_title(const char *title){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_title(title);
+    }
+}
+
+const char *Button::get_title(){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->get_title();
+    }
+    return "";
+}
+
 void Button::set_size(const visuals::size &size){
     if (this->m_button_bridge != nullptr){
         this->m_button_bridge->set_size(size);
@@ -32,6 +45,52 @@ visuals::point Button::get_position() const{
     return {};
 }
 
+bool Button::is_enabled() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->is_enabled();
+    }
+    return false;
+}
+
+bool Button::is_hidden() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->is_hidden();
+    }
+    return false;
+}
+
+bool Button::is_bordered() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->is_bordered();
+    }
+    return false;
+}
+
+bttn::state Button::is_state() const{
+    if (this->m_button_bridge != nullptr){
+        return this->m_button_bridge->is_state();
+    }
+    return {};
+}
+
+void Button::set_enabled(bool status){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_enabled(status);
+    }
+}
+
+void Button::set_hidden(bool status){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_hidden(status);
+    }
+}
+
+void Button::set_bordered(bool status){
+    if (this->m_button_bridge != nullptr){
+        this->m_button_bridge->set_bordered(status);
+    }
+}
+
 bool Button::Create(void *parent, const bttn::property &prop){
     if (this->m_button_bridge == nullptr){
         this->m_button_bridge = new ButtonBridge(parent, prop);
@@ -56,28 +115,100 @@ ButtonBridge::~ButtonBridge(){
     [this->m_button_delegate release];
 }
 
+void ButtonBridge::set_title(const char *title){
+    if (this->m_ns_button != nil){
+        [this->m_ns_button setTitle:((title != nullptr) ? [NSString stringWithUTF8String:title] : @"")];
+    }
+}
+
+const char *ButtonBridge::get_title(){
+    if (this->m_ns_button != nil){
+        return [[this->m_ns_button title] UTF8String];
+    }
+    return "";
+}
+
 void ButtonBridge::set_size(const visuals::size &size){
-    NSRect rect = this->m_ns_button.frame;
-    rect.size = NSMakeSize((CGFloat)size.GetX(), (CGFloat)size.GetY());
-    this->m_ns_button.frame = rect;
+    if (this->m_ns_button != nil){
+        NSRect rect = this->m_ns_button.frame;
+        rect.size = NSMakeSize((CGFloat)size.GetX(), (CGFloat)size.GetY());
+        this->m_ns_button.frame = rect;
+    }
+    return;
 }
 
 void ButtonBridge::set_position(const visuals::point &point){
-    NSRect rect = this->m_ns_button.frame;
-    rect.origin = NSMakePoint((CGFloat)point.GetX(), (CGFloat)point.GetY());
-    this->m_ns_button.frame = rect;
+    if (this->m_ns_button != nil){
+        NSRect rect = this->m_ns_button.frame;
+        rect.origin = NSMakePoint((CGFloat)point.GetX(), (CGFloat)point.GetY());
+        this->m_ns_button.frame = rect;
+    }
+    return;
 }
 
 visuals::size ButtonBridge::get_size() const{
-    CGSize size = [this->m_ns_button frame].size;
-    
-    return { static_cast<double>(size.width), static_cast<double>(size.height) };
+    if (this->m_ns_button != nil){
+        CGSize size = [this->m_ns_button frame].size;
+        return { static_cast<double>(size.width), static_cast<double>(size.height) };
+    }
+    return {};
 }
 
 visuals::point ButtonBridge::get_position() const{
-    CGPoint point = [this->m_ns_button frame].origin;
-    
-    return { static_cast<double>(point.x), static_cast<double>(point.y) };
+    if (this->m_ns_button != nil){
+        CGPoint point = [this->m_ns_button frame].origin;
+        return { static_cast<double>(point.x), static_cast<double>(point.y) };
+    }
+    return {};
+}
+
+bool ButtonBridge::is_enabled() const{
+    if (this->m_ns_button != nil){
+        return static_cast<bool>([this->m_ns_button isEnabled]);
+    }
+    return false;
+}
+
+bool ButtonBridge::is_hidden() const{
+    if (this->m_ns_button != nil){
+        return static_cast<bool>([this->m_ns_button isHidden]);
+    }
+    return false;
+}
+
+bool ButtonBridge::is_bordered() const{
+    if (this->m_ns_button != nil){
+        return static_cast<bool>([this->m_ns_button isBordered]);
+    }
+    return false;
+}
+
+bttn::state ButtonBridge::is_state() const{
+    if (this->m_ns_button != nil){
+        return static_cast<bttn::state>([this->m_ns_button state]);
+    }
+    return {};
+}
+
+void ButtonBridge::set_enabled(bool en){
+    if (this->m_ns_button != nil){
+        [this->m_ns_button setEnabled:(BOOL)en];
+    }
+    return;
+}
+
+void ButtonBridge::set_hidden(bool en){
+    if (this->m_ns_button != nil){
+        [this->m_ns_button setHidden:(BOOL)en];
+    }
+    return;
+}
+
+void ButtonBridge::set_bordered(bool en){
+    if (this->m_ns_button != nil){
+        [this->m_ns_button setBordered:en];
+    }
+    return;
 }
 
 bool ButtonBridge::Create(void *parent, const bttn::property &prop){
@@ -106,6 +237,7 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         [this->m_ns_button setState:(NSControlStateValue)prop.state];
         [this->m_ns_button setBezelStyle:(NSBezelStyle)prop.style];
         [this->m_ns_button setButtonType:(NSButtonType)prop.type];
+        [this->m_ns_button setBordered:(BOOL)prop.bordered];
         [this->m_ns_view addSubview:this->m_ns_button];
         
         return true;

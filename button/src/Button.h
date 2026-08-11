@@ -34,11 +34,23 @@ public:
     ButtonBridge(void*, const bttn::property&);
     ~ButtonBridge();
     
+    void set_title(const char*);
+    const char *get_title();
+    
     void set_size(const visuals::size&);
     void set_position(const visuals::point&);
     
     visuals::size  get_size() const;
     visuals::point get_position() const;
+    
+    bool is_enabled() const;
+    bool is_hidden() const;
+    bool is_bordered() const;
+    bttn::state is_state() const;
+    
+    void set_enabled(bool);
+    void set_hidden(bool);
+    void set_bordered(bool);
     
     bool Create(void*, const bttn::property&);
     void _bind(const std::function<void(const bttn::event&)>&);

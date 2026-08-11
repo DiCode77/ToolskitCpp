@@ -50,12 +50,13 @@ enum class state{
 };
 
 struct property{
-    const char    *title = nullptr;
-    visuals::point point = visuals::default_position;
-    visuals::size  size  = visuals::default_size;
-    const btype    type  = btype::MomentaryLight;
-    const bstyle   style = bstyle::BezelStyleAutomatic;
-    const state    state = state::ControlStateValueOff;
+    const char    *title    = nullptr;
+    visuals::point point    = visuals::default_position;
+    visuals::size  size     = visuals::default_size;
+    const btype    type     = btype::MomentaryLight;
+    const bstyle   style    = bstyle::BezelStyleAutomatic;
+    const state    state    = state::ControlStateValueOff;
+    const bool     bordered = true;
 };
 
 struct event{
