@@ -44,8 +44,15 @@ public:
     void set_toggle(Button*);
     void remove_toggle(Button*);
     
+    void set_image(const bttn::img&);
+    void remove_image();
+    
+    void set_bezel_color(const bttn::colors&);
+    
     bool Create(void*, const bttn::property&);
     void bind(const std::function<void(const bttn::event&)>&);
+private:
+    bool is_init_button_object() const;
 };
 
 #endif

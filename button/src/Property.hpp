@@ -68,6 +68,23 @@ enum class img_pos{
     ImageTrailing
 };
 
+struct colors{
+    int r;
+    int g;
+    int b;
+    int a;
+    
+    bool operator== (const colors &_c) const{
+        return this->r == _c.r && this->g == _c.g && this->b == _c.b && this->a == _c.a;
+    }
+    
+    bool operator!= (const colors &_c) const{
+        return this->r != _c.r || this->g != _c.g || this->b != _c.b || this->a != _c.a;
+    }
+};
+
+constexpr colors colors_default = { -1, -1, -1, -1};
+
 struct img{
     const char         *dir   = nullptr;
     const visuals::size size  = visuals::default_size;
@@ -76,15 +93,16 @@ struct img{
 };
 
 struct property{
-    const char    *title    = nullptr;
-    visuals::point point    = visuals::default_position;
-    visuals::size  size     = visuals::default_size;
-    const btype    type     = btype::MomentaryLight;
-    const bstyle   style    = bstyle::BezelStyleAutomatic;
-    const state    state    = state::ControlStateValueOff;
-    const bool     bordered = true;
-    const int      tag      = -1;
-    const img      icon     = {};
+    const char    *title       = nullptr;
+    visuals::point point       = visuals::default_position;
+    visuals::size  size        = visuals::default_size;
+    const btype    type        = btype::MomentaryLight;
+    const bstyle   style       = bstyle::BezelStyleAutomatic;
+    const state    state       = state::ControlStateValueOff;
+    const bool     bordered    = true;
+    const int      tag         = -1;
+    const img      icon        = {};
+    const colors   bezel_color = colors_default;
 };
 
 struct event{

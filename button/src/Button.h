@@ -60,7 +60,11 @@ public:
     void set_toggle(ButtonBridge *l_bbuton);
     void remove_toggle(ButtonBridge *l_bbuton);
     
-    void set_image(const char*);
+    bool is_image();
+    void set_image(const bttn::img&);
+    void remove_image();
+    
+    void set_bezel_color(const bttn::colors&);
     
     bool Create(void*, const bttn::property&);
     void _bind(const std::function<void(const bttn::event&)>&);
