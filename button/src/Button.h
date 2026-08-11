@@ -17,7 +17,7 @@
 #include "Point.hpp"
 #include "Size.hpp"
 
-#include "Property.hpp"
+#include "PropertyButton.hpp"
 
 class ButtonBridge;
 @interface ButtonDelegate : NSObject
