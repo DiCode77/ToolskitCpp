@@ -20,6 +20,7 @@
 class ButtonBridge;
 @interface ButtonDelegate : NSObject
 @property (nonatomic, assign) ButtonBridge *bridge;
+- (void)buttonClicked:(id)sender;
 @end
 
 class ButtonBridge{
@@ -27,11 +28,14 @@ class ButtonBridge{
     NSButton       *m_ns_button;
     ButtonDelegate *m_button_delegate;
 public:
+    std::function<void(const bttn::event&)> m_cell_button;
+public:
     ButtonBridge();
     ButtonBridge(void*, const bttn::property&);
     ~ButtonBridge();
     
     bool Create(void*, const bttn::property&);
+    void _bind(const std::function<void(const bttn::event&)>&);
 };
 
 #endif

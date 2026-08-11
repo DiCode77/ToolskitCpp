@@ -8,6 +8,8 @@
 #ifndef Button_hpp
 #define Button_hpp
 
+#include <functional>
+
 #include "Point.hpp"
 #include "Size.hpp"
 
@@ -21,6 +23,7 @@ public:
     Button(void*, const bttn::property&);
     
     bool Create(void*, const bttn::property&);
+    void bind(const std::function<void(const bttn::event&)>&);
 };
 
 #endif

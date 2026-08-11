@@ -14,6 +14,10 @@ bool Button::Create(void *parent, const bttn::property &prop){
     return false;
 }
 
+void Button::bind(const std::function<void(const bttn::event&)> &func){
+    this->m_button_bridge->_bind(func);
+}
+
 ButtonBridge::ButtonBridge() : m_ns_view(nil), m_ns_button(nil), m_button_delegate([[ButtonDelegate alloc] init]){}
 ButtonBridge::ButtonBridge(void *parent, const bttn::property &prop) : ButtonBridge::ButtonBridge(){
     this->Create(parent, prop);
@@ -49,6 +53,7 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         
         [this->m_ns_button initWithFrame:rect];
         [this->m_ns_button setTitle: ((prop.title != nullptr) ? [NSString stringWithUTF8String:prop.title] : @"Button")];
+        [this->m_ns_button setState:(NSControlStateValue)prop.state];
         [this->m_ns_button setBezelStyle:(NSBezelStyle)prop.style];
         [this->m_ns_button setButtonType:(NSButtonType)prop.type];
         [this->m_ns_view addSubview:this->m_ns_button];
@@ -58,6 +63,39 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
     return false;
 }
 
-@implementation ButtonDelegate
+void ButtonBridge::_bind(const std::function<void(const bttn::event&)> &func){
+    if (this->m_ns_button){
+        [this->m_ns_button setTarget:this->m_button_delegate];
+        [this->m_ns_button setAction:@selector(buttonClicked:)];
+        this->m_cell_button = std::move(func);
+    }
+}
 
+@implementation ButtonDelegate
+- (void)buttonClicked:(id)sender{
+    if (self.bridge != nullptr){
+        if (self.bridge->m_cell_button){
+            NSButton *button = (NSButton*)sender;
+            bttn::event ev{
+                .prop{
+                    .title  = [[button title] UTF8String],
+                    .point{
+                        static_cast<double>([button visibleRect].origin.x),
+                        static_cast<double>([button visibleRect].origin.y)
+                    },
+                        .size{
+                            static_cast<double>([button visibleRect].size.width),
+                            static_cast<double>([button visibleRect].size.height)
+                        },
+                    .type   = static_cast<bttn::btype>(-1),
+                    .style  = static_cast<bttn::bstyle>([button bezelStyle]),
+                    .state  = static_cast<bttn::state>([button state]),
+                },
+                    .enabled = static_cast<bool>([button isEnabled]),
+                .hidden = static_cast<bool>([button isHidden]),
+            };
+            self.bridge->m_cell_button(ev);
+        }
+    }
+}
 @end

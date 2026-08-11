@@ -43,12 +43,26 @@ enum class bstyle{
     BezelStyleTexturedSquare      = 8,
 };
 
+enum class state{
+    ControlStateValueMixed = -1,
+    ControlStateValueOff   = 0,
+    ControlStateValueOn    = 1
+};
+
 struct property{
     const char    *title = nullptr;
     visuals::point point = visuals::default_position;
     visuals::size  size  = visuals::default_size;
     const btype    type  = btype::MomentaryLight;
     const bstyle   style = bstyle::BezelStyleAutomatic;
+    const state    state = state::ControlStateValueOff;
+};
+
+struct event{
+    property prop;
+    int      id;
+    bool     enabled;
+    bool     hidden;
 };
 }
 
