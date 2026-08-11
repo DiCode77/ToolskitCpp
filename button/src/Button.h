@@ -12,6 +12,7 @@
 #include <Cocoa/Cocoa.h>
 #include <functional>
 #include <set>
+#include <filesystem>
 
 #include "Point.hpp"
 #include "Size.hpp"
@@ -24,13 +25,10 @@ class ButtonBridge;
 - (void)buttonClicked:(id)sender;
 @end
 
-@interface ButtonGroup : NSObject
-@property (nonatomic, retain) NSArray *m_buttons;
-@end
-
 class ButtonBridge{
     NSView         *m_ns_view;
     NSButton       *m_ns_button;
+    NSImage        *m_image;
     ButtonDelegate *m_button_delegate;
 public:
     std::function<void(const bttn::event&)> m_cell_button;
@@ -60,9 +58,14 @@ public:
     void set_state(const bttn::state&);
     
     void set_toggle(ButtonBridge *l_bbuton);
+    void remove_toggle(ButtonBridge *l_bbuton);
+    
+    void set_image(const char*);
     
     bool Create(void*, const bttn::property&);
     void _bind(const std::function<void(const bttn::event&)>&);
+private:
+    NSImage *init_image_in_button(const bttn::img&);
 };
 
 #endif

@@ -49,6 +49,32 @@ enum class state{
     ControlStateValueOn    = 1
 };
 
+enum class img_scale{ // These are the display scaling settings associated with the button itself.
+    ImageScaleProportionallyDown,
+    ImageScaleAxesIndependently,
+    ImageScaleNone,
+    ImageScaleProportionallyUpOrDown
+};
+
+enum class img_pos{
+    NoImage,
+    ImageOnly,
+    ImageLeft,
+    ImageRight,
+    ImageBelow,
+    ImageAbove,
+    ImageOverlaps,
+    ImageLeading,
+    ImageTrailing
+};
+
+struct img{
+    const char         *dir   = nullptr;
+    const visuals::size size  = visuals::default_size;
+    const img_scale     scale = img_scale::ImageScaleAxesIndependently;
+    const img_pos       posit = img_pos::ImageOnly;
+};
+
 struct property{
     const char    *title    = nullptr;
     visuals::point point    = visuals::default_position;
@@ -58,6 +84,7 @@ struct property{
     const state    state    = state::ControlStateValueOff;
     const bool     bordered = true;
     const int      tag      = -1;
+    const img      icon     = {};
 };
 
 struct event{

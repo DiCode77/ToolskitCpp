@@ -103,6 +103,12 @@ void Button::set_toggle(Button *l_button){
     }
 }
 
+void Button::remove_toggle(Button *l_button){
+    if (m_button_bridge != nullptr){
+        this->m_button_bridge->remove_toggle(l_button->m_button_bridge);
+    }
+}
+
 bool Button::Create(void *parent, const bttn::property &prop){
     if (this->m_button_bridge == nullptr){
         this->m_button_bridge = new ButtonBridge(parent, prop);
@@ -231,10 +237,23 @@ void ButtonBridge::set_state(const bttn::state &state){
 }
 
 void ButtonBridge::set_toggle(ButtonBridge *l_bbuton){
-    this->m_array_button.insert(l_bbuton->m_ns_button);
-    
-    [l_bbuton->m_ns_button setTarget:this->m_button_delegate];
-    [l_bbuton->m_ns_button setAction:[this->m_ns_button action]];
+    if (this->m_ns_button != nil && l_bbuton != nil){
+        this->m_array_button.insert(l_bbuton->m_ns_button);
+        
+        [l_bbuton->m_ns_button setTarget:this->m_button_delegate];
+        [l_bbuton->m_ns_button setAction:[this->m_ns_button action]];
+    }
+}
+
+void ButtonBridge::remove_toggle(ButtonBridge *l_bbuton){
+    if (this->m_ns_button != nil && l_bbuton){
+        if (auto it = this->m_array_button.find(l_bbuton->m_ns_button); it != this->m_array_button.end()){
+            this->m_array_button.erase(it);
+        }
+        
+        [l_bbuton->m_ns_button setTarget:nil];
+        [l_bbuton->m_ns_button setAction:nil];
+    }
 }
 
 bool ButtonBridge::Create(void *parent, const bttn::property &prop){
@@ -265,6 +284,18 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
         [this->m_ns_button setButtonType:(NSButtonType)prop.type];
         [this->m_ns_button setBordered:(BOOL)prop.bordered];
         [this->m_ns_button setTag:(NSInteger)prop.tag];
+        
+        if (NSImage *img = this->init_image_in_button(prop.icon); img != nil){
+            [this->m_ns_button setImage:img];
+            [this->m_ns_button setImagePosition:(NSCellImagePosition)prop.icon.posit];
+            
+            if (img.size.width != visuals::default_size.GetX() && img.size.height != visuals::default_size.GetY())
+                [this->m_ns_button setFrameSize:img.size];
+            
+            [this->m_ns_button setImageScaling:(NSImageScaling)prop.icon.scale];
+            [img release];
+        }
+        
         [this->m_ns_view addSubview:this->m_ns_button];
         
         this->m_array_button.insert(this->m_ns_button);
@@ -280,6 +311,19 @@ void ButtonBridge::_bind(const std::function<void(const bttn::event&)> &func){
         [this->m_ns_button setAction:@selector(buttonClicked:)];
         this->m_cell_button = std::move(func);
     }
+}
+
+NSImage *ButtonBridge::init_image_in_button(const bttn::img &img){
+    if (img.dir != nullptr){
+        if (std::filesystem::exists(img.dir)){
+            NSImage *image = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:img.dir]];
+            if (visuals::default_size != img.size){
+                image.size = NSMakeSize(img.size.GetX(), img.size.GetY());
+            }
+            return image;
+        }
+    }
+    return nil;
 }
 
 @implementation ButtonDelegate

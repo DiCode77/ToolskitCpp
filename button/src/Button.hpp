@@ -42,6 +42,7 @@ public:
     void set_state(const bttn::state&);
     
     void set_toggle(Button*);
+    void remove_toggle(Button*);
     
     bool Create(void*, const bttn::property&);
     void bind(const std::function<void(const bttn::event&)>&);
