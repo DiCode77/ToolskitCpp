@@ -12,6 +12,8 @@
 #include "Size.hpp"
 
 namespace bttn{
+const visuals::size default_button_size = visuals::size(90, 20);
+
 enum class btype{
     MomentaryLight,       /// Standard button: When pressed, it temporarily changes its appearance; when released, it returns to its original state. It does not retain its state.
     PushOnPushOff,        /// Toggle switch. First press → ON, second press → OFF. Remembers the setting.
@@ -86,16 +88,17 @@ struct colors{
 constexpr colors colors_default = { -1, -1, -1, -1};
 
 struct img{
-    const char         *dir   = nullptr;
-    const visuals::size size  = visuals::default_size;
-    const img_scale     scale = img_scale::ImageScaleAxesIndependently;
-    const img_pos       posit = img_pos::ImageOnly;
+    const char         *dir        = nullptr;
+    const visuals::size size       = visuals::default_size;
+    const img_scale     scale      = img_scale::ImageScaleAxesIndependently;
+    const img_pos       posit      = img_pos::ImageOnly;
+    const bool          bauto_size = false;
 };
 
 struct property{
     const char    *title       = nullptr;
     visuals::point point       = visuals::default_position;
-    visuals::size  size        = visuals::default_size;
+    visuals::size  size        = default_button_size;
     const btype    type        = btype::MomentaryLight;
     const bstyle   style       = bstyle::BezelStyleAutomatic;
     const state    state       = state::ControlStateValueOff;

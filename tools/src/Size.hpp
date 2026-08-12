@@ -43,7 +43,7 @@ public:
     }
 };
 
-const size default_size = size(90, 20);
+const size default_size = size(-1, -1);
 };
 
 #endif

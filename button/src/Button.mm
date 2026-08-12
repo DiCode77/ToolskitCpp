@@ -250,8 +250,9 @@ void ButtonBridge::set_image(const bttn::img &icon){
         [this->m_ns_button setImage:img];
         [this->m_ns_button setImagePosition:(NSCellImagePosition)icon.posit];
         
-        if (img.size.width != visuals::default_size.GetX() && img.size.height != visuals::default_size.GetY())
+        if (icon.bauto_size == true){
             [this->m_ns_button setFrameSize:img.size];
+        }
         
         [this->m_ns_button setImageScaling:(NSImageScaling)icon.scale];
         [img release];
@@ -286,10 +287,10 @@ bool ButtonBridge::Create(void *parent, const bttn::property &prop){
             rect.origin = CGPoint(0, 0);
         }
         
-        if (prop.size != visuals::default_size){
+        if (prop.size != bttn::default_button_size){
             rect.size = CGSize(prop.size.GetX(), prop.size.GetY());
         }else{
-            rect.size = CGSize(visuals::default_size.GetX(), visuals::default_size.GetY());
+            rect.size = CGSize(bttn::default_button_size.GetX(), bttn::default_button_size.GetY());
         }
         
         [this->m_ns_button initWithFrame:rect];
