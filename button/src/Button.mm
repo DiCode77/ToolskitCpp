@@ -229,6 +229,7 @@ void ButtonBridge::set_toggle(ButtonBridge *l_bbuton){
     
     [l_bbuton->m_ns_button setTarget:this->m_button_delegate];
     [l_bbuton->m_ns_button setAction:[this->m_ns_button action]];
+    [l_bbuton->m_ns_button setBezelColor:[NSColor systemGrayColor]];
 }
 
 void ButtonBridge::remove_toggle(ButtonBridge *l_bbuton){
@@ -238,6 +239,7 @@ void ButtonBridge::remove_toggle(ButtonBridge *l_bbuton){
     
     [l_bbuton->m_ns_button setTarget:nil];
     [l_bbuton->m_ns_button setAction:nil];
+    [l_bbuton->m_ns_button setBezelColor:[NSColor systemBlueColor]];
 }
 
 bool ButtonBridge::is_image(){
@@ -365,8 +367,11 @@ NSImage *ButtonBridge::init_image_in_button(const bttn::img &img){
                 if (*it != button){
                     if ([(*it) state] != NSControlStateValueOff){
                         [(*it) setState:NSControlStateValueOff];
-                        [(*it) setBezelColor:[NSColor systemGrayColor]];
                     }
+                    
+                    [(*it) setBezelColor:[NSColor systemGrayColor]];
+                    [(*it) setState:NSControlStateValueOff];
+                    
                 }else{
                     [(*it) setBezelColor:[NSColor systemBlueColor]];
                 }
