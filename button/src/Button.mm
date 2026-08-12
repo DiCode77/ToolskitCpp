@@ -228,7 +228,7 @@ void ButtonBridge::set_toggle(ButtonBridge *l_bbuton){
     this->m_array_button.insert(l_bbuton->m_ns_button);
     
     [l_bbuton->m_ns_button setTarget:this->m_button_delegate];
-    [l_bbuton->m_ns_button setAction:[this->m_ns_button action]];
+    [l_bbuton->m_ns_button setAction:@selector(buttonClicked:)];
     [l_bbuton->m_ns_button setBezelColor:[NSColor systemGrayColor]];
 }
 
