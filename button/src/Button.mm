@@ -365,7 +365,10 @@ NSImage *ButtonBridge::init_image_in_button(const bttn::img &img){
                 if (*it != button){
                     if ([(*it) state] != NSControlStateValueOff){
                         [(*it) setState:NSControlStateValueOff];
+                        [(*it) setBezelColor:[NSColor systemGrayColor]];
                     }
+                }else{
+                    [(*it) setBezelColor:[NSColor systemBlueColor]];
                 }
             }
             self.bridge->m_cell_button(ev);

@@ -28,11 +28,10 @@ class ButtonBridge;
 class ButtonBridge{
     NSView         *m_ns_view;
     NSButton       *m_ns_button;
-    NSImage        *m_image;
     ButtonDelegate *m_button_delegate;
 public:
     std::function<void(const bttn::event&)> m_cell_button;
-    std::set<NSButton*> m_array_button;
+    std::set<NSButton*>                     m_array_button;
 public:
     ButtonBridge();
     ButtonBridge(void*, const bttn::property&);
